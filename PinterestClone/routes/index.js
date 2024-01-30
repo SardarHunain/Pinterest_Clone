@@ -3,15 +3,18 @@ var router = express.Router();
 const userModel = require('./users');
 const postModel = require('./post');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local');
 
 passport.use(new LocalStrategy(userModel.authenticate()));
-passport.serializeUser(userModel.serializeUser());
-passport.deserializeUser(userModel.deserializeUser());
+// passport.serializeUser(userModel.serializeUser());
+// passport.deserializeUser(userModel.deserializeUser());
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
+});
+router.get('/profile', function(req, res, next) {
+  res.send("profile page");
 });
 
 router.get('/profile', isLoggedIn, function(req, res, next) {
@@ -25,16 +28,11 @@ router.post('/register', function(req, res) {
     fullname: req.body.fullname,
   });
 
-  userModel.register(userData, req.body.password, function(err, user) {
-    if (err) {
-      console.error(err);
-      return res.redirect('/');
-    }
-
-    passport.authenticate('local')(req, res, function() {
-      res.redirect('/profile');
-    });
-  });
+  userModel.register(userData, req.body.password).then(function(){
+    passport.authenticate("local")(req,res,function(){
+      res.redirect("/profile")
+    })
+  })
 });
 
 router.post('/login', passport.authenticate('local', {

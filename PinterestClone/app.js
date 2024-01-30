@@ -18,11 +18,11 @@ app.use(expressSession({
   resave:false,
   saveUninitialized:false,
   secret:"asdasfgkj43132964104gkjafgaskute41294etkajvf"
-}))
-app.use(passport.initialize())
-app.use(passport.session())
-passport.serializeUser(usersRouter.serializeUser())
-passport.deserializeUser(usersRouter.deserializeUser())
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(usersRouter.serializeUser());
+passport.deserializeUser(usersRouter.deserializeUser());
 
 app.use(logger('dev'));
 app.use(express.json());
