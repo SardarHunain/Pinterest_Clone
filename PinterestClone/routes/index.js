@@ -6,16 +6,19 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 
 passport.use(new LocalStrategy(userModel.authenticate()));
-// passport.serializeUser(userModel.serializeUser());
-// passport.deserializeUser(userModel.deserializeUser());
+ passport.serializeUser(userModel.serializeUser());
+ passport.deserializeUser(userModel.deserializeUser());
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-router.get('/profile', function(req, res, next) {
-  res.send("profile page");
+
+router.get('/login', function(req, res, next) {
+  res.render('login');
 });
+
+
 
 router.get('/profile', isLoggedIn, function(req, res, next) {
   res.render('profile');
@@ -38,11 +41,15 @@ router.post('/register', function(req, res) {
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/profile',
   failureRedirect: '/',
-}));
+}),function(req,res){});
 
-router.get('/logout', function(req, res) {
-  req.logout();
-  res.redirect('/');
+router.get('/logout', function(req, res, next) {
+  req.logout(function(err){
+    if(err){return next(err);}
+    res.redirect('/');
+    console.log("logged out")
+  });
+  
 });
 
 function isLoggedIn(req, res, next) {
