@@ -20,8 +20,13 @@ router.get('/login', function(req, res, next) {
 
 
 
-router.get('/profile', isLoggedIn, function(req, res, next) {
-  res.render('profile');
+router.get('/profile', isLoggedIn, async function(req, res, next) {
+  const user = await userModel.findOne({
+    username: req.session.passport.user
+  
+  })
+  console.log(user)
+  res.render('profile',{user});
 });
 
 router.get('/feed',  function(req, res, next) {
