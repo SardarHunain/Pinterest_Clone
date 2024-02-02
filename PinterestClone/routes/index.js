@@ -31,7 +31,7 @@ router.post('/upload',isLoggedIn,upload.single("file"), async(req, res)=> {
   })
   user.posts.push(post._id)
   await user.save()
-  res.send("done")
+  res.redirect("/profile")
 });
 
 
