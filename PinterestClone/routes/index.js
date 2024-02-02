@@ -19,11 +19,19 @@ router.get('/login', function(req, res, next) {
   res.render('login',{error:req.flash("error")});
 });
 
-router.post('/upload',upload.single("file"), (req, res)=> {
+router.post('/upload',isLoggedIn,upload.single("file"), async(req, res)=> {
   if(!req.file){
     return res.status(404).send("No files were uploaded.");
   }
-  res.send("File uploaded successfully")
+  const user = await userModel.findOne({username:req.session.passport.user})
+  const post =  await postModel.create({
+    image:req.file.filename,
+    imageText:req.body.filecaption,
+    user:user._id
+  })
+  user.posts.push(post._id)
+  await user.save()
+  res.send("done")
 });
 
 
@@ -32,7 +40,7 @@ router.get('/profile', isLoggedIn, async function(req, res, next) {
   const user = await userModel.findOne({
     username: req.session.passport.user
   
-  })
+  }).populate("posts")
   console.log(user)
   res.render('profile',{user});
 });
