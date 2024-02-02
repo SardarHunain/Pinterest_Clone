@@ -4,6 +4,7 @@ const userModel = require('./users');
 const postModel = require('./post');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const upload = require("./multer")
 
 passport.use(new LocalStrategy(userModel.authenticate()));
  passport.serializeUser(userModel.serializeUser());
@@ -16,6 +17,13 @@ router.get('/', function(req, res, next) {
 
 router.get('/login', function(req, res, next) {
   res.render('login',{error:req.flash("error")});
+});
+
+router.post('/upload',upload.single("file"), (req, res)=> {
+  if(!req.file){
+    return res.status(404).send("No files were uploaded.");
+  }
+  res.send("File uploaded successfully")
 });
 
 
